@@ -602,6 +602,7 @@ wxConnectionBase *pyuvServer::OnAcceptConnection(const wxString& topic)
         // This is used to verify that I am available to be commanded
 
         // Check that there are no modal dialogs active
+#if 0
         wxWindowList::Node* node = wxTopLevelWindows.GetFirst();
         while(node)
         {
@@ -612,7 +613,16 @@ wxConnectionBase *pyuvServer::OnAcceptConnection(const wxString& topic)
             }
             node = node->GetNext();
         }
-
+#else
+        for (auto it : wxTopLevelWindows)
+        {
+            wxDialog* dialog = wxDynamicCast(it, wxDialog);
+            if(dialog && dialog->IsModal())
+            {
+                return NULL;
+            }
+        }
+#endif
         return new pyuvConnection(frame);
 
     }
